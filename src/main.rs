@@ -3,15 +3,13 @@ use serde_json::json;
 use std::thread::sleep;
 use std::time;
 
-use chrono::{DateTime, Duration, Utc};
+use chrono::{DateTime, Datelike, Duration, Utc};
+use chrono_tz::Europe::Amsterdam;
+use chrono_tz::Japan;
 
 fn main() {
   loop {
-    let mut now: DateTime<Utc> = Utc::now();
-    let month = now.format("%m").to_string().parse::<i32>().unwrap();
-    if month == 8 {
-      now = now + Duration::days(365 * 10 + 2);
-    }
+    let now = get_now();
     generate_waybar(
       &now.format("%b %e %Y").to_string(),
       &now.format("%b %-d, %H:%M:%S").to_string(),
@@ -20,6 +18,22 @@ fn main() {
 
     sleep(time::Duration::from_millis(1000));
   }
+}
+
+fn get_now() -> DateTime<chrono_tz::Tz> {
+  return weebify_time(
+    DateTime::from(Utc::now().with_timezone(&Amsterdam))
+  );
+}
+
+fn weebify_time(in_time: DateTime<chrono_tz::Tz>) -> DateTime<chrono_tz::Tz> {
+  let mut new_time: DateTime<chrono_tz::Tz> = in_time;
+  let japan_time = in_time.with_timezone(&Japan);
+
+  /* The flower we saw that day */
+  if japan_time.month() == 8 { new_time = new_time+(Duration::days(365*10+2)); }
+  
+  return new_time;
 }
 
 fn generate_waybar(
