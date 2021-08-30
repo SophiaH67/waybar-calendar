@@ -14,10 +14,8 @@ fn main() {
     }
     generate_waybar(
       &now.format("%b %e %Y").to_string(),
-      "monkey",
       &now.format("%b %-d, %H:%M:%S").to_string(),
       "calendar",
-      23,
     );
 
     sleep(time::Duration::from_millis(1000));
@@ -26,17 +24,13 @@ fn main() {
 
 fn generate_waybar(
   text: &str,
-  alt: &str,
   tooltip: &str,
   class: &str,
-  percentage: u8,
 ) {
   let waybar = json!({
     "text": text,
-    "alt": alt,
     "tooltip": tooltip,
     "class": class,
-    "percentage": percentage
   });
   println!("{}", waybar.to_string());
 }
